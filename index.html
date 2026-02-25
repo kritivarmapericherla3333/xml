@@ -1,13 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Student Information</title>
+    <title>XML Projects</title>
+
+    <script>
+        function loadXMLDoc(filename) {
+            var xhttp = new XMLHttpRequest();
+            xhttp.open("GET", filename, false);
+            xhttp.send();
+            return xhttp.responseXML;
+        }
+
+        function displayResult(xmlFile, xslFile, elementId) {
+            var xml = loadXMLDoc(xmlFile);
+            var xsl = loadXMLDoc(xslFile);
+
+            if (window.ActiveXObject || "ActiveXObject" in window) {
+                var ex = xml.transformNode(xsl);
+                document.getElementById(elementId).innerHTML = ex;
+            } else if (document.implementation && document.implementation.createDocument) {
+                var xsltProcessor = new XSLTProcessor();
+                xsltProcessor.importStylesheet(xsl);
+                var resultDocument = xsltProcessor.transformToFragment(xml, document);
+                document.getElementById(elementId).appendChild(resultDocument);
+            }
+        }
+
+        window.onload = function () {
+            displayResult("Bookstore.xml", "Book.xsl", "books");
+            displayResult("Studentinfo.xml", "Student.xsl", "students");
+        }
+    </script>
+
 </head>
+
 <body>
 
-<h2>Student Information</h2>
+    <h2>Book Details</h2>
+    <div id="books"></div>
 
-<iframe src="Studentinfo.xml" width="100%" height="500px"></iframe>
+    <hr>
+
+    <h2>Student Details</h2>
+    <div id="students"></div>
 
 </body>
 </html>
